@@ -1,0 +1,17 @@
+---
+profile: production
+
+exclude_paths:
+  - docs/
+  - images/
+  - .githooks/
+  - configs/
+
+warn_list:
+  - experimental
+
+skip_list: []
+
+use_default_rules: true
+
+verbosity: 1

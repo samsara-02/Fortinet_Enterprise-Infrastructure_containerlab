@@ -1,0 +1,55 @@
+---
+name: lint
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  conventional-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: webiny/action-conventional-commits@v1.3.0
+
+  yaml-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install yamllint
+      - run: yamllint -c .yamllint .
+
+  ansible-lint:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check if ansible directory exists
+        id: ansible-check
+        run: echo "exists=$(test -d ansible && echo true || echo false)" >> $GITHUB_OUTPUT
+      - name: Install dependencies
+        if: steps.ansible-check.outputs.exists == 'true'
+        run: pip install ansible ansible-lint
+      - name: Run ansible-lint
+        if: steps.ansible-check.outputs.exists == 'true'
+        run: ansible-lint ansible/
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
