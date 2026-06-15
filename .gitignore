@@ -370,3 +370,10 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/ansible,terraform,packer,visualstudiocode,vim,linux,windows,macos,dotenv,vagrant,virtualenv,python
+
+### Fortinet / vrnetlab images ###
+appliances/**/*.qcow2
+appliances/**/*.zip
+appliances/**/*.out
+appliances/**/*.ova
+appliances/**/*.vmdk
